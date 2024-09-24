@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfaxpractice"
+		},
+		"ADLS_accountKey": {
+			"value": ""
+		},
+		"AzureSQL_password": {
+			"value": ""
+		},
+		"ADLS_properties_typeProperties_url": {
+			"value": "https://wsaxpractice.dfs.core.windows.net/"
+		},
+		"AzureSQL_properties_typeProperties_server": {
+			"value": "server-axpractice.database.windows.net"
+		},
+		"AzureSQL_properties_typeProperties_database": {
+			"value": "sql-axpractice"
+		},
+		"AzureSQL_properties_typeProperties_userName": {
+			"value": "axadmin"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
