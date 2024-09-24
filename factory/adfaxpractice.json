@@ -1,0 +1,9 @@
+{
+	"name": "adfaxpractice",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "8d9cfe0a-fd28-4a2f-8eb2-45718013ddf9",
+		"tenantId": "364c65de-b927-477c-b720-f8a4bb48674b"
+	}
+}
