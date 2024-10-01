@@ -3,11 +3,11 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Web1",
+				"name": "HttpsPOST",
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "FilePath",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -31,7 +31,7 @@
 				}
 			},
 			{
-				"name": "Set variable1",
+				"name": "FilePath",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"policy": {
