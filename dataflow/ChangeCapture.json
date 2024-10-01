@@ -1,0 +1,129 @@
+{
+	"name": "ChangeCapture",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TestChangeCapture_Source",
+						"type": "DatasetReference"
+					},
+					"name": "TestChangeCapture"
+				},
+				{
+					"dataset": {
+						"referenceName": "sqlChangeCaptureTest",
+						"type": "DatasetReference"
+					},
+					"name": "sqlChangeCaptureTest"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "sqlChangeCaptureTest",
+						"type": "DatasetReference"
+					},
+					"name": "sqlChangeCaptureTestS"
+				},
+				{
+					"dataset": {
+						"referenceName": "sqlChangeCaptureTest",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "HashCSV"
+				},
+				{
+					"name": "HashSQL"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          DOB as date,",
+				"          Mobile as string,",
+				"          Email as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TestChangeCapture",
+				"source(output(",
+				"          ID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          DOB as date,",
+				"          Mobile as string,",
+				"          Email as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> sqlChangeCaptureTest",
+				"TestChangeCapture derive(HashValue1 = sha1(256,columns())) ~> HashCSV",
+				"sqlChangeCaptureTest derive(HashValue2 = sha1(256,columns())) ~> HashSQL",
+				"lookup1 split(isNull(HashValue2),",
+				"     equals(HashValue1, HashValue2),",
+				"     disjoint: false) ~> split1@(Insert, Update)",
+				"HashCSV, HashSQL lookup(HashValue1 == HashValue2,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"split1@Update alterRow(updateIf(true())) ~> alterRow1",
+				"split1@Insert sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          DOB as date,",
+				"          Mobile as string,",
+				"          Email as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sqlChangeCaptureTestS",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          DOB as date,",
+				"          Mobile as string,",
+				"          Email as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['ID','DOB'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}
