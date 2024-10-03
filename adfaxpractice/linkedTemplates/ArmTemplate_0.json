@@ -142,6 +142,96 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TestCDCID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "DOB",
+						"type": "date"
+					},
+					{
+						"name": "Mobile",
+						"type": "varchar"
+					},
+					{
+						"name": "CreatedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TestCDCSource"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TestCDCID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "DOB",
+						"type": "date"
+					},
+					{
+						"name": "Mobile",
+						"type": "varchar"
+					},
+					{
+						"name": "CreatedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TestCDCTarget"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSQL')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TestChangeCapture_Source')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -253,7 +343,28 @@
 							{
 								"name": "dbo.TestCDCSource",
 								"properties": {
-									"schema": [],
+									"schema": [
+										{
+											"name": "TestCDCID",
+											"dataType": "integer"
+										},
+										{
+											"name": "Name",
+											"dataType": "string"
+										},
+										{
+											"name": "DOB",
+											"dataType": "date"
+										},
+										{
+											"name": "Mobile",
+											"dataType": "string"
+										},
+										{
+											"name": "CreatedDate",
+											"dataType": "timestamp"
+										}
+									],
 									"dslConnectorProperties": [
 										{
 											"name": "schemaName",
@@ -270,6 +381,14 @@
 										{
 											"name": "netChanges",
 											"value": true
+										},
+										{
+											"name": "allowSchemaDrift",
+											"value": false
+										},
+										{
+											"name": "inferDriftedColumnTypes",
+											"value": false
 										}
 									]
 								}
@@ -322,7 +441,28 @@
 							{
 								"name": "dbo.TestCDCTarget",
 								"properties": {
-									"schema": [],
+									"schema": [
+										{
+											"name": "TestCDCID",
+											"dataType": "integer"
+										},
+										{
+											"name": "Name",
+											"dataType": "string"
+										},
+										{
+											"name": "DOB",
+											"dataType": "date"
+										},
+										{
+											"name": "Mobile",
+											"dataType": "string"
+										},
+										{
+											"name": "CreatedDate",
+											"dataType": "timestamp"
+										}
+									],
 									"dslConnectorProperties": [
 										{
 											"name": "schemaName",
@@ -353,6 +493,14 @@
 										{
 											"name": "defaultToUpsert",
 											"value": true
+										},
+										{
+											"name": "allowSchemaDrift",
+											"value": false
+										},
+										{
+											"name": "inferDriftedColumnTypes",
+											"value": false
 										}
 									]
 								}
@@ -426,7 +574,76 @@
 									"type": "linkedservicetype"
 								},
 								"attributeMappingInfo": {
-									"attributeMappings": []
+									"attributeMappings": [
+										{
+											"name": "CreatedDate",
+											"type": "Direct",
+											"functionName": "",
+											"attributeReference": {
+												"name": "CreatedDate",
+												"entity": "dbo.TestCDCSource",
+												"entityConnectionReference": {
+													"connectionName": "AzureSQL",
+													"type": "linkedservicetype"
+												}
+											}
+										},
+										{
+											"name": "DOB",
+											"type": "Direct",
+											"functionName": "",
+											"attributeReference": {
+												"name": "DOB",
+												"entity": "dbo.TestCDCSource",
+												"entityConnectionReference": {
+													"connectionName": "AzureSQL",
+													"type": "linkedservicetype"
+												}
+											}
+										},
+										{
+											"name": "Mobile",
+											"type": "Direct",
+											"functionName": "",
+											"attributeReference": {
+												"name": "Mobile",
+												"entity": "dbo.TestCDCSource",
+												"entityConnectionReference": {
+													"connectionName": "AzureSQL",
+													"type": "linkedservicetype"
+												}
+											}
+										},
+										{
+											"name": "Name",
+											"type": "Derived",
+											"functionName": "upper",
+											"expression": "upper(Name)",
+											"attributeReferences": [
+												{
+													"name": "Name",
+													"entity": "dbo.TestCDCSource",
+													"entityConnectionReference": {
+														"connectionName": "AzureSQL",
+														"type": "linkedservicetype"
+													}
+												}
+											]
+										},
+										{
+											"name": "TestCDCID",
+											"type": "Direct",
+											"functionName": "",
+											"attributeReference": {
+												"name": "TestCDCID",
+												"entity": "dbo.TestCDCSource",
+												"entityConnectionReference": {
+													"connectionName": "AzureSQL",
+													"type": "linkedservicetype"
+												}
+											}
+										}
+									]
 								}
 							}
 						],
@@ -583,6 +800,73 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/TestCDC')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable2",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          TestCDCID as integer,",
+						"          Name as string,",
+						"          DOB as date,",
+						"          Mobile as string,",
+						"          CreatedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     enableNativeCdc: true,",
+						"     netChanges: true,",
+						"     skipInitialLoad: false,",
+						"     isolationLevel: 'READ_COMMITTED',",
+						"     format: 'table') ~> source1",
+						"source1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          TestCDCID as integer,",
+						"          Name as string,",
+						"          DOB as date,",
+						"          Mobile as string,",
+						"          CreatedDate as timestamp",
+						"     ),",
+						"     deletable:true,",
+						"     insertable:true,",
+						"     updateable:true,",
+						"     upsertable:true,",
+						"     keys:['TestCDCID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ChangeCapture')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -633,6 +917,55 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/ChangeCapture')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestCDC')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "TestCDC",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine",
+							"continuationSettings": {
+								"customizedCheckpointKey": "95a4324c-66f6-419a-afa0-be62bc611d8e"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/TestCDC')]"
 			]
 		}
 	]
