@@ -7,7 +7,28 @@
 					{
 						"name": "dbo.TestCDCSource",
 						"properties": {
-							"schema": [],
+							"schema": [
+								{
+									"name": "TestCDCID",
+									"dataType": "integer"
+								},
+								{
+									"name": "Name",
+									"dataType": "string"
+								},
+								{
+									"name": "DOB",
+									"dataType": "date"
+								},
+								{
+									"name": "Mobile",
+									"dataType": "string"
+								},
+								{
+									"name": "CreatedDate",
+									"dataType": "timestamp"
+								}
+							],
 							"dslConnectorProperties": [
 								{
 									"name": "schemaName",
@@ -24,6 +45,14 @@
 								{
 									"name": "netChanges",
 									"value": true
+								},
+								{
+									"name": "allowSchemaDrift",
+									"value": false
+								},
+								{
+									"name": "inferDriftedColumnTypes",
+									"value": false
 								}
 							]
 						}
@@ -76,7 +105,28 @@
 					{
 						"name": "dbo.TestCDCTarget",
 						"properties": {
-							"schema": [],
+							"schema": [
+								{
+									"name": "TestCDCID",
+									"dataType": "integer"
+								},
+								{
+									"name": "Name",
+									"dataType": "string"
+								},
+								{
+									"name": "DOB",
+									"dataType": "date"
+								},
+								{
+									"name": "Mobile",
+									"dataType": "string"
+								},
+								{
+									"name": "CreatedDate",
+									"dataType": "timestamp"
+								}
+							],
 							"dslConnectorProperties": [
 								{
 									"name": "schemaName",
@@ -107,6 +157,14 @@
 								{
 									"name": "defaultToUpsert",
 									"value": true
+								},
+								{
+									"name": "allowSchemaDrift",
+									"value": false
+								},
+								{
+									"name": "inferDriftedColumnTypes",
+									"value": false
 								}
 							]
 						}
@@ -180,7 +238,76 @@
 							"type": "linkedservicetype"
 						},
 						"attributeMappingInfo": {
-							"attributeMappings": []
+							"attributeMappings": [
+								{
+									"name": "CreatedDate",
+									"type": "Direct",
+									"functionName": "",
+									"attributeReference": {
+										"name": "CreatedDate",
+										"entity": "dbo.TestCDCSource",
+										"entityConnectionReference": {
+											"connectionName": "AzureSQL",
+											"type": "linkedservicetype"
+										}
+									}
+								},
+								{
+									"name": "DOB",
+									"type": "Direct",
+									"functionName": "",
+									"attributeReference": {
+										"name": "DOB",
+										"entity": "dbo.TestCDCSource",
+										"entityConnectionReference": {
+											"connectionName": "AzureSQL",
+											"type": "linkedservicetype"
+										}
+									}
+								},
+								{
+									"name": "Mobile",
+									"type": "Direct",
+									"functionName": "",
+									"attributeReference": {
+										"name": "Mobile",
+										"entity": "dbo.TestCDCSource",
+										"entityConnectionReference": {
+											"connectionName": "AzureSQL",
+											"type": "linkedservicetype"
+										}
+									}
+								},
+								{
+									"name": "Name",
+									"type": "Derived",
+									"functionName": "upper",
+									"expression": "upper(Name)",
+									"attributeReferences": [
+										{
+											"name": "Name",
+											"entity": "dbo.TestCDCSource",
+											"entityConnectionReference": {
+												"connectionName": "AzureSQL",
+												"type": "linkedservicetype"
+											}
+										}
+									]
+								},
+								{
+									"name": "TestCDCID",
+									"type": "Direct",
+									"functionName": "",
+									"attributeReference": {
+										"name": "TestCDCID",
+										"entity": "dbo.TestCDCSource",
+										"entityConnectionReference": {
+											"connectionName": "AzureSQL",
+											"type": "linkedservicetype"
+										}
+									}
+								}
+							]
 						}
 					}
 				],
