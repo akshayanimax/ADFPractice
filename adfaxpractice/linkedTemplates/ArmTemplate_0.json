@@ -633,7 +633,6 @@
 										{
 											"name": "TestCDCID",
 											"type": "Direct",
-											"functionName": "",
 											"attributeReference": {
 												"name": "TestCDCID",
 												"entity": "dbo.TestCDCSource",
