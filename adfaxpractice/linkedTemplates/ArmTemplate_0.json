@@ -664,7 +664,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TestCSVsource')]",
+			"name": "[concat(parameters('factoryName'), '/TestCSV')]",
 			"type": "Microsoft.DataFactory/factories/adfcdcs",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -843,29 +843,72 @@
 					{
 						"TargetEntities": [
 							{
-								"name": "test/TestCDCfile/ChangeCapture",
+								"name": "dbo.testcdcfromcsv",
 								"properties": {
-									"schema": [],
+									"schema": [
+										{
+											"name": "ID",
+											"dataType": "integer"
+										},
+										{
+											"name": "FirstName",
+											"dataType": "string"
+										},
+										{
+											"name": "LastName",
+											"dataType": "string"
+										},
+										{
+											"name": "DOB",
+											"dataType": "date"
+										},
+										{
+											"name": "Mobile",
+											"dataType": "string"
+										},
+										{
+											"name": "Email",
+											"dataType": "string"
+										}
+									],
 									"dslConnectorProperties": [
 										{
-											"name": "container",
-											"value": "test"
+											"name": "schemaName",
+											"value": "dbo"
 										},
 										{
-											"name": "fileSystem",
-											"value": "test"
+											"name": "tableName",
+											"value": "testcdcfromcsv"
 										},
 										{
-											"name": "folderPath",
-											"value": "TestCDCfile/ChangeCapture"
+											"name": "deletable",
+											"value": true
+										},
+										{
+											"name": "updateable",
+											"value": true
+										},
+										{
+											"name": "upsertable",
+											"value": true
+										},
+										{
+											"name": "defaultToUpsert",
+											"value": true
 										},
 										{
 											"name": "allowSchemaDrift",
-											"value": true
+											"value": false
 										},
 										{
 											"name": "inferDriftedColumnTypes",
-											"value": true
+											"value": false
+										},
+										{
+											"name": "keys",
+											"value": [
+												"ID"
+											]
 										}
 									]
 								}
@@ -873,10 +916,10 @@
 						],
 						"Connection": {
 							"linkedService": {
-								"referenceName": "ADLS",
+								"referenceName": "AzureSQL",
 								"type": "LinkedServiceReference"
 							},
-							"linkedServiceType": "AzureBlobFS",
+							"linkedServiceType": "AzureSqlDatabase",
 							"type": "linkedservicetype",
 							"isInlineDataset": true,
 							"commonDslConnectorProperties": [
@@ -890,29 +933,49 @@
 								},
 								{
 									"name": "format",
-									"value": "delimited"
+									"value": "table"
 								},
 								{
-									"name": "columnNamesAsHeader",
+									"name": "store",
+									"value": "sqlserver"
+								},
+								{
+									"name": "databaseType",
+									"value": "databaseType"
+								},
+								{
+									"name": "database",
+									"value": "database"
+								},
+								{
+									"name": "deletable",
+									"value": false
+								},
+								{
+									"name": "insertable",
 									"value": true
 								},
 								{
-									"name": "columnDelimiter",
-									"value": ","
+									"name": "updateable",
+									"value": false
 								},
 								{
-									"name": "escapeChar",
-									"value": "\\\\"
+									"name": "upsertable",
+									"value": false
 								},
 								{
-									"name": "quoteChar",
-									"value": "\\\""
+									"name": "skipDuplicateMapInputs",
+									"value": true
+								},
+								{
+									"name": "skipDuplicateMapOutputs",
+									"value": true
 								}
 							]
 						},
 						"DataMapperMappings": [
 							{
-								"targetEntityName": "test/TestCDCfile/ChangeCapture",
+								"targetEntityName": "dbo.testcdcfromcsv",
 								"sourceEntityName": "test/ChangeCapture",
 								"sourceConnectionReference": {
 									"connectionName": "ADLS",
@@ -977,19 +1040,16 @@
 										},
 										{
 											"name": "LastName",
-											"type": "Derived",
-											"functionName": "lower",
-											"expression": "lower(LastName)",
-											"attributeReferences": [
-												{
-													"name": "LastName",
-													"entity": "test/ChangeCapture",
-													"entityConnectionReference": {
-														"connectionName": "ADLS",
-														"type": "linkedservicetype"
-													}
+											"type": "Direct",
+											"functionName": "",
+											"attributeReference": {
+												"name": "LastName",
+												"entity": "test/ChangeCapture",
+												"entityConnectionReference": {
+													"connectionName": "ADLS",
+													"type": "linkedservicetype"
 												}
-											]
+											}
 										},
 										{
 											"name": "Mobile",
@@ -1014,14 +1074,15 @@
 				"Policy": {
 					"recurrence": {
 						"frequency": "Minute",
-						"interval": 1
+						"interval": 15
 					},
 					"mode": "Microbatch"
 				},
 				"allowVNetOverride": false
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
+				"[concat(variables('factoryId'), '/linkedServices/ADLS')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureSQL')]"
 			]
 		},
 		{
