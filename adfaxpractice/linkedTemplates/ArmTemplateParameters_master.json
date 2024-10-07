@@ -23,6 +23,9 @@
 		"AzureSQL_properties_typeProperties_userName": {
 			"value": "axadmin"
 		},
+		"OData1_properties_typeProperties_url": {
+			"value": "https://services.odata.org/TripPinRESTierService/"
+		},
 		"containerUri": {
 			"value": ""
 		},
