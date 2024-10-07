@@ -1,0 +1,30 @@
+{
+	"name": "TVIIFFileMappingJason",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "mapping",
+				"folderPath": "TestValueinIFcondition",
+				"fileSystem": "test"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"filename": {
+					"type": "string"
+				},
+				"tablename": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
